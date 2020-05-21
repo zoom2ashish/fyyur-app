@@ -7,6 +7,7 @@
 		{% for venue in area.venues %}
 		<li>
 			<a href="/venues/{{ venue.id }}">
+				<button class="btn btn-danger" type="submit" onclick="deleteVenue({{venue.id}})">Delete</button>
 				<i class="fas fa-music"></i>
 				<div class="item">
 					<h5>{{ venue.name }}</h5>
@@ -16,4 +17,23 @@
 		{% endfor %}
 	</ul>
 {% endfor %}
+
+
+{% block javascript %}
+<script>
+	function deleteVenue(venueId) {
+		debugger;
+		fetch('/venues/'+venueId, {
+			method: 'DELETE'
+		}).then(() => {
+			debugger;
+			document.location.replace('/');
+		}).catch(err => {
+			debugger;
+			console.log(err);
+		})
+	}
+</script>
+{% endblock %}
+
 {% endblock %}
