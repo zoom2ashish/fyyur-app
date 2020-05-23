@@ -1,13 +1,14 @@
 {% extends 'layouts/main.html' %}
 {% block title %}Fyyur | Venues{% endblock %}
 {% block content %}
+<div id="alert" class="hidden alert" role="alert"></div>
 {% for area in areas %}
 <h3>{{ area.city }}, {{ area.state }}</h3>
 	<ul class="items">
 		{% for venue in area.venues %}
 		<li>
 			<a href="/venues/{{ venue.id }}">
-				<button class="btn btn-danger" type="submit" onclick="deleteVenue({{venue.id}})">Delete</button>
+				<button class="btn btn-danger" type="button" onClick="deleteVenue(event, {{venue.id}})">Delete</button>
 				<i class="fas fa-music"></i>
 				<div class="item">
 					<h5>{{ venue.name }}</h5>
@@ -17,23 +18,40 @@
 		{% endfor %}
 	</ul>
 {% endfor %}
-
+{% endblock %}
 
 {% block javascript %}
 <script>
-	function deleteVenue(venueId) {
-		debugger;
-		fetch('/venues/'+venueId, {
-			method: 'DELETE'
-		}).then(() => {
-			debugger;
-			document.location.replace('/');
+	function showAlert(message, alertType) {
+		const errorElement = document.getElementById('error');
+		const alertClass = 'alert-' + (alertType || 'secondary').toLowerCase();
+		if (message) {
+			errorElement.classList.add(alertClass);
+			errorElement.classList.remove('hidden');
+		} else {
+			errorElement.classList.add('hidden');
+		}
+		errorElement.innerText = message || '';
+	}
+	function deleteVenue(event, venueId) {
+		event.preventDefault();
+		event.stopPropagation();
+		const path = '/venues/' + venueId;
+		const deleteAction = fetch(path, {
+			method: 'DELETE',
+			headers: {
+				'X-CSRFToken': "{{ csrf_token() }}"
+			}
+		}).then((response) => {
+			if (response.status === 200) {
+				document.location.replace('/venues');
+			} else {
+				showAlert('Failed to delete venue.', 'danger');
+			}
 		}).catch(err => {
-			debugger;
+			showAlert('Failed to delete venue.', 'danger');
 			console.log(err);
-		})
+		});
 	}
 </script>
-{% endblock %}
-
 {% endblock %}
