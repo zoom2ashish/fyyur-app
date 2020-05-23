@@ -1,14 +1,50 @@
 from datetime import datetime
 from flask_wtf import Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, RadioField
-from wtforms.validators import DataRequired, AnyOf, URL
+from wtforms.validators import DataRequired, AnyOf, URL, ValidationError
+from enum import Enum
+import phonenumbers
+
+class Genre(Enum):
+    Alternative ='Alternative'
+    Blues ='Blues'
+    Classical ='Classical'
+    Country ='Country'
+    Electronic ='Electronic'
+    Folk ='Folk'
+    Funk ='Funk'
+    HipHop ='Hip-Hop'
+    HeavyMetal ='Heavy Metal'
+    Instrumental ='Instrumental'
+    Jazz ='Jazz'
+    MusicalTheatre ='Musical Theatre'
+    Pop ='Pop'
+    Punk ='Punk'
+    R_n_B ='R&B'
+    Reggae ='Reggae'
+    Rock_N_Roll ='Rock n Roll'
+    Soul ='Soul'
+    Other ='Other'
+
+    @classmethod
+    def choices(cls):
+        return [
+           (choice.name,choice.value) for choice in cls
+        ]
+
+    @classmethod
+    def coerce(cls, item):
+        item = cls(item) if not isinstance(item, cls) else item
+        return item.value
 
 class ShowForm(Form):
-    artist_id = StringField(
-        'artist_id'
+    artist = SelectField(
+        'artist', validators=[DataRequired()],
+        choices=[]
     )
-    venue_id = StringField(
-        'venue_id'
+    venue = SelectField(
+        'venue', validators=[DataRequired()],
+        choices=[]
     )
     start_time = DateTimeField(
         'start_time',
@@ -89,29 +125,9 @@ class VenueForm(Form):
         'image_link'
     )
     genres = SelectMultipleField(
-        # TODO implement enum restriction
+        # DONE: TODO implement enum restriction
         'genres', validators=[DataRequired()],
-        choices=[
-            ('Alternative', 'Alternative'),
-            ('Blues', 'Blues'),
-            ('Classical', 'Classical'),
-            ('Country', 'Country'),
-            ('Electronic', 'Electronic'),
-            ('Folk', 'Folk'),
-            ('Funk', 'Funk'),
-            ('Hip-Hop', 'Hip-Hop'),
-            ('Heavy Metal', 'Heavy Metal'),
-            ('Instrumental', 'Instrumental'),
-            ('Jazz', 'Jazz'),
-            ('Musical Theatre', 'Musical Theatre'),
-            ('Pop', 'Pop'),
-            ('Punk', 'Punk'),
-            ('R&B', 'R&B'),
-            ('Reggae', 'Reggae'),
-            ('Rock n Roll', 'Rock n Roll'),
-            ('Soul', 'Soul'),
-            ('Other', 'Other'),
-        ]
+        choices = Genre.choices()
     )
     facebook_link = StringField(
         'facebook_link', validators=[URL()]
@@ -183,41 +199,37 @@ class ArtistForm(Form):
             ('WY', 'WY'),
         ]
     )
+    address = StringField(
+        'address', validators=[DataRequired()]
+    )
     phone = StringField(
-        # TODO implement validation logic for state
+        # DONE: TODO implement validation logic for state
         'phone'
     )
     image_link = StringField(
         'image_link'
     )
     genres = SelectMultipleField(
-        # TODO implement enum restriction
+        # DONE: TODO implement enum restriction
         'genres', validators=[DataRequired()],
-        choices=[
-            ('Alternative', 'Alternative'),
-            ('Blues', 'Blues'),
-            ('Classical', 'Classical'),
-            ('Country', 'Country'),
-            ('Electronic', 'Electronic'),
-            ('Folk', 'Folk'),
-            ('Funk', 'Funk'),
-            ('Hip-Hop', 'Hip-Hop'),
-            ('Heavy Metal', 'Heavy Metal'),
-            ('Instrumental', 'Instrumental'),
-            ('Jazz', 'Jazz'),
-            ('Musical Theatre', 'Musical Theatre'),
-            ('Pop', 'Pop'),
-            ('Punk', 'Punk'),
-            ('R&B', 'R&B'),
-            ('Reggae', 'Reggae'),
-            ('Rock n Roll', 'Rock n Roll'),
-            ('Soul', 'Soul'),
-            ('Other', 'Other'),
-        ]
+        choices=Genre.choices()
     )
     facebook_link = StringField(
-        # TODO implement enum restriction
         'facebook_link', validators=[URL()]
     )
 
-# TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
+    def validate_phone(self, field):
+        if not field.data:
+            return True
+
+        if len(field.data) > 16:
+            raise ValidationError('Invalid phone number.')
+        try:
+            input_number = phonenumbers.parse(field.data)
+            if not (phonenumbers.is_valid_number(input_number)):
+                raise ValidationError('Invalid phone number')
+        except:
+            raise ValidationError('Invalid phone number.')
+
+
+# DONE: TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM

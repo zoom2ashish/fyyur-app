@@ -161,7 +161,7 @@ class Artist(db.Model):
       ]
     }
 
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+# DONE: ODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 class Show(db.Model):
   __tablename__ = "Show"
   id = db.Column(db.Integer, primary_key=True)
@@ -179,8 +179,10 @@ class Show(db.Model):
       'id': self.id,
       'start_time': self.start_time.strftime('%m/%d/%Y, %H:%M:%S'),
       'venue_id': self.venue_id,
-      'artist_id': self.artist_id,
+      'venue_name': self.venue.name,
       'venue_image_link': self.venue.image_link,
+      'artist_id': self.artist_id,
+      'artist_name': self.artist.name,
       'artist_image_link': self.artist.image_link
     }
 
