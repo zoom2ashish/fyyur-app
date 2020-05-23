@@ -229,7 +229,9 @@ class ArtistForm(Form):
             if not (phonenumbers.is_valid_number(input_number)):
                 raise ValidationError('Invalid phone number')
         except:
-            raise ValidationError('Invalid phone number.')
+            input_number = phonenumbers.parse('+1'+field.data)
+            if not (phonenumbers.is_valid_number(input_number)):
+                raise ValidationError('Invalid phone number')
 
 
 # DONE: TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
