@@ -8,7 +8,7 @@ db = SQLAlchemy()
 #----------------------------------------------------------------------------#
 
 class Venue(db.Model):
-  __tablename__ = 'Venue'
+  __tablename__ = 'venues'
 
   id = db.Column(db.Integer, primary_key=True)
   name = db.Column(db.String)
@@ -98,7 +98,7 @@ class Venue(db.Model):
 
 
 class Artist(db.Model):
-  __tablename__ = 'Artist'
+  __tablename__ = 'artists'
 
   id = db.Column(db.Integer, primary_key=True)
   name = db.Column(db.String)
@@ -163,14 +163,14 @@ class Artist(db.Model):
 
 # DONE: ODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 class Show(db.Model):
-  __tablename__ = "Show"
+  __tablename__ = "shows"
   id = db.Column(db.Integer, primary_key=True)
   start_time = db.Column(db.DateTime, nullable=False)
   # Show-Venue relationship
-  venue_id = db.Column(db.Integer,  db.ForeignKey('Venue.id'), nullable=False)
+  venue_id = db.Column(db.Integer,  db.ForeignKey('venues.id'), nullable=False)
   venue = db.relationship('Venue', backref=db.backref('shows', cascade='all, delete'))
   # Show-Artist relationship
-  artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable=False)
+  artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'), nullable=False)
   artist = db.relationship('Artist', backref=db.backref('shows', cascade='all, delete'))
 
   @property
