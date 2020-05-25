@@ -187,3 +187,35 @@ INSERT INTO "Show"(venue_id, artist_id, start_time) VALUES(3, 2, '2019-06-15T23:
 INSERT INTO "Show"(venue_id, artist_id, start_time) VALUES(3, 3, '2019-04-01T20:00:00.000Z');
 INSERT INTO "Show"(venue_id, artist_id, start_time) VALUES(3, 3, '2035-04-08T20:00:00.000Z');
 INSERT INTO "Show"(venue_id, artist_id, start_time) VALUES(3, 3, '2035-04-15T20:00:00.000Z');
+
+
+-- Query Artists with upcoming shows
+SELECT artists.id, artists.name, count(shows.start_time)
+FROM artists
+LEFT OUTER JOIN shows ON artists.id = shows.artist_id AND shows.start_time > NOW()
+GROUP BY artists.id;
+
+-- Query Artists with past shows
+SELECT artists.id, artists.name, count(shows.start_time)
+FROM artists
+LEFT OUTER JOIN shows ON artists.id = shows.artist_id AND shows.start_time <= NOW()
+GROUP BY artists.id;
+
+
+-- Query Artists with upcoming shows
+SELECT artists.id, artists.name, count(shows.start_time)
+FROM artists
+LEFT OUTER JOIN shows ON artists.id = shows.artist_id AND shows.start_time > NOW()
+GROUP BY artists.id;
+
+-- Query Venues with upcoming shows
+SELECT venues.id, venues.name, count(shows.start_time)
+FROM venues
+LEFT OUTER JOIN shows ON venues.id = shows.artist_id AND shows.start_time > NOW()
+GROUP BY venues.id;
+
+-- Query Venues with past shows
+SELECT venues.id, venues.name, count(shows.start_time)
+FROM venues
+LEFT OUTER JOIN shows ON venues.id = shows.artist_id AND shows.start_time <= NOW()
+GROUP BY venues.id;

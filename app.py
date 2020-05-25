@@ -94,8 +94,9 @@ def show_venue(venue_id):
     abort(404)
 
   venue_data = venue.serialize
-  upcoming_shows_data = venue.serialize_upcoming_shows_details
-  past_shows_data = venue.serialize_past_shows_details
+  upcoming_shows_data = venue.serialize_upcoming_shows_details_using_join
+  past_shows_data = venue.serialize_past_shows_details_using_join
+  # Merge Venue and Shows Data
   data = {**venue_data, **upcoming_shows_data, **past_shows_data}
   return render_template('pages/show_venue.html', venue=data)
 
@@ -185,11 +186,13 @@ def show_artist(artist_id):
   # shows the venue page with the given venue_id
   # DONE: TODO: replace with real venue data from the venues table, using venue_id
   artist = Artist.query.filter(Artist.id == artist_id).one_or_none()
+  past_shows_data = artist.serialize_past_shows_details_using_join
+  upcoming_shows_data = artist.serialize_upcoming_shows_details_using_join
   if artist is not None:
     data = {
       **artist.serialize,
-      **artist.serialize_past_shows_details,
-      **artist.serialize_upcoming_shows_details
+      **past_shows_data,
+      **upcoming_shows_data
     }
     return render_template('pages/show_artist.html', artist=data)
   else:
