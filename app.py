@@ -9,6 +9,7 @@ from flask import Flask, render_template, request, Response, flash, redirect, ur
 from flask_moment import Moment
 from flask_migrate import Migrate, MigrateCommand
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
@@ -25,6 +26,7 @@ app = Flask(__name__)
 moment = Moment(app)
 app.config.from_object('config')
 csrf = CSRFProtect(app)
+cors = CORS(app)
 
 # Connect SQLAlchemy and Flask App
 db.init_app(app)
@@ -33,6 +35,11 @@ db.init_app(app)
 migrate = Migrate(app, db)
 # DONE: TODO: connect to a local postgresql database
 
+@app.after_request
+def after_request(response):
+  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH,DELETE')
+  return response
 
 #----------------------------------------------------------------------------#
 # Filters.
